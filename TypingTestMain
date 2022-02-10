@@ -1,0 +1,103 @@
+from tkinter import *
+root = Tk()
+root.configure(background='#191c25')
+root.title('Typing Test')
+root.geometry('1000x600')
+root.resizable(False, False)
+
+typingtests = ['Scolding is something common in student life. Being a naughty boy, I am always scolded by my parents. But one day I was severely scolded by my English teacher. She infect teaches well. But that day, I could not resist the temptation that an adventure of Nancy Drew offered. While she was teaching, I was completely engrossed in reading that book. Nancy Drew was caught in the trap laid by some smugglers and it was then when I felt a light tap on my bent head. The teacher had caught me red handed. She scolded me then and there and insulted me in front of the whole class. I was embarrassed. My cheeks burned being guilty conscious. When the class was over, I went to the teacher to apologize. When she saw that I had realized my mistake, she cooled down and then told me in a very kind manner how disheartening it was when she found any student not paying attention. I was genuinely sorry and promised to myself never to commit such a mistake again.', 'Days are not of equal value in one’s life. Some bring happiness while others bring sadness. Sadness and happiness both are equally important to man’s life, since they are the two sides of a coin. As we cannot forget the happiest day, we are unable to forget the saddest day of our life too. The saddest day of my life was the Diwali Day. Diwali is considered to be a happy festival and till last Diwali, it was my favorite festival. On last Diwali, my sister, my brother and I were busy lighting the fireworks. I was holding a ‘fuljhari’ in my hand and unfortunately my younger brother, who was standing just beside me, had a cracker in his hand. This cracker caught fire and a very loud explosion was heard which shook my sister and me. After that, we all could think of nothing else than blood stained cotton, bandage, dettol etc. My cousin took my brother to the doctor where he got 14 stitches in his forefinger and thumb. But at home, everybody kept cursing and blaming me for the mishap. That night, I could not sleep and I cried a lot. For next few days, I bore the burden of this blame for being responsible for this unfortunate incident. I felt deeply guilty conscious which I was able to overcome after a long time.', 'Studying is the main source of knowledge. Books are indeed never failing friends of man. For a mature mind, reading is the greatest source of pleasure and solace to distressed minds. The study of good books ennobles us and broadens our outlook. Therefore, the habit of reading should be cultivated. A student should never confine himself to his schoolbooks only. He should not miss the pleasure locked in the classics, poetry, drama, history, philosophy etc. We can derive benefit from other’s experiences with the help of books. The various sufferings, endurance and joy described in books enable us to have a closer look at human life. They also inspire us to face the hardships of life courageously. Nowadays there are innumerable books and time is scarce. So we should read only the best and the greatest among them. With the help of books we shall be able to make our thinking mature and our life more meaningful and worthwhile.', 'Recently, an exhibition ‘Building A New India’ was held in the capital. It was organized by the Ministry of Information and Broadcasting, Government of India. The exhibition was set up in the Triveni Kala Sangam. The chief exhibits were photographs, novels, some sculptures by Indian modern artists presenting Indian cultural inheritance. First of all, I visited the general section of the exhibition where different charts and photographs depicting India’s development in various fields were set. Most impressive photographs among these were those showing India’s nuclear development. The second section dealt with India’s magnificent historical background. I was fascinated by the pictures of Mohanjodaro excavation. Then I saw the most beautiful and colorful section of the exhibition i.e. the cultural section. It consisted of paintings, sculptures, photographs etc. The Rajasthani and Gujarati paintings were very colourful and attractive. This exhibition, inaugurated by the Prime Minister, lasted for a week. It proved to be of great educational value. It brushed up my knowledge about India as my motherland. It enhanced my respect for my great country, India. I would very much appreciate if the Indian government organized some more such exhibitions.', 'A teacher is called builder of the nation. The profession of teaching needs men and women with qualities of head and heart. There are many teachers in our school and a large number of teachers among them are highly qualified. I have great respect for all of them. Yet I have a special liking for Miss Y. Miss Y is a woman of great principles. She is jewel among all the teachers. Almost all the students respect her. She teaches us English. She is quite at home in this subject. She takes keen interest in teaching students. Simple living and high thinking is her motto. She is a woman of sweet temper and is always ready to help in difficulties. She treats us like her own brothers and sisters. She is an ideal teacher. It is these qualities of head and heart that have endeared Miss Y to the students and teachers alike. She is an ideal teacher in real sense of the word. She is the real model to emulate. May she live as long as there is sweet fragrance in the flowers?']
+stop = False
+usertextcorrect = ''
+
+def startfunc(countdown):
+    reset_button.config(bg='#32cb8b', text='1:00', disabledforeground='#f1e9e6', state=DISABLED)
+    speed.config(text='WPM: - - -')
+    text.config(text=countdown)
+    countdown -= 1
+    if countdown >= 0:
+        text.after(1000,lambda: startfunc(countdown))
+    else:
+        text.config(text='TYPE', background='#191c25')
+        text.place(relx=.5, rely=.075, anchor=CENTER)
+        typings.insert(INSERT, typingtests[0])
+        timer(60) 
+        typing()
+        
+def timer(seconds):
+    global stop
+    if seconds == 60:
+        times = '1:00'
+    elif len(str(seconds)) == 2:
+        times = '0:' + str(seconds)
+    elif len(str(seconds)) == 1:
+        times = '0:0' + str(seconds)
+    reset_button.config(text=times, bg='#cb3c32', disabledforeground='#f1e9e6', state=DISABLED)
+    seconds -= 1
+    if seconds >= 0:
+        reset_button.after(1000,lambda: timer(seconds)) 
+        stop = False
+    else:
+        calculation()
+        e.delete(0, END)
+        text.config(text='Click start to test your type', background='#232532')
+        text.place(relx=.5, rely=.5, anchor=CENTER)
+        reset_button.config(text='START', bg='#32cb8b', state=NORMAL) 
+        stop = True  
+
+def typing():
+    global usertextcorrect
+    global stop
+    usertext = e.get()
+    typings.delete('1.0', 'end')
+    if len(usertext) == 1:
+        typings.insert(INSERT, typingtests[0])
+    elif typingtests[0].startswith(usertext) == True:
+        newtext = typingtests[0].replace(usertext, '')
+        usertextcorrect = e.get()
+        typings.insert(INSERT, usertext)
+        typings.tag_add('typed', '1.0', 'end-1c' )
+        typings.insert(INSERT, newtext)
+    else:
+        newtext = typingtests[0].replace(usertextcorrect, '')
+        incorrectending = len(usertext) - len(usertextcorrect)
+        typings.insert('2.0', newtext)
+        typings.tag_add('error', '1.0', '1.' + str(incorrectending))
+        typings.insert('1.0', usertextcorrect)
+        typings.tag_add('typed', '1.0', '1.' + str(len(usertextcorrect)) )
+    if stop == False:
+        typings.after(10, typing)
+    else:
+        typings.delete('1.0', END)
+
+def calculation():
+    string = e.get()
+    extra_pts = 0
+    length = len(string)
+    for i in string:
+        if i.isupper() == True:
+            extra_pts += 2
+            length -= 1
+    true_pts = extra_pts + length        
+    wpm = float(true_pts / 5)
+    wpm = round(wpm)
+    speed.config(text='WPM: ' + str(wpm))
+        
+e = Entry(root, width=50, borderwidth=5, font=('Arial', 20), bg='#2c2d3f', bd=0, highlightthickness=1, fg='#f1e9e6')
+e.config(highlightbackground='#f1e9e6', highlightcolor= "#f1e9e6")
+e.place(relx=.42, rely=.9, anchor=CENTER, height=50)
+
+reset_button = Button(root, text='START', width=8, height=1, bg='#32cb8b', bd=0, highlightthickness=0, font=('Arial', 20), fg='#f1e9e6', activebackground='#32cb8b', activeforeground='#f1e9e6' , command=lambda: startfunc(3))
+reset_button.place(relx=.89, rely=.9, anchor=CENTER)
+
+typings = Text(root, bd=0,highlightthickness=0, fg='#a9a6ad', bg='#232532', font=('Arial', 19), width=65, height=15, wrap=WORD)
+typings.place(relx=.5, rely=.46, anchor=CENTER)
+typings.tag_config('typed', foreground='#f1e9e6', background='#2c2d3f')
+typings.tag_config('error', foreground='#cb3c32', background='#191c25' )
+
+text = Label(root, text='Click start to test your type.', bd=0, highlightthickness=1, fg='#f1e9e6', bg='#232532', font=('Arial', 20))
+text.place(relx=.5, rely=.5, anchor=CENTER)
+
+speed = Label(root, text='WPM: - - -', bd=0, highlightthickness=1, fg='#f1e9e6', bg='#191c25', font=('Arial', 17))
+speed.place(relx=.9, rely=.075, anchor=CENTER)
+  
+root.mainloop()
